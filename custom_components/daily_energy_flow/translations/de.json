@@ -1,0 +1,149 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Täglicher Energiefluss",
+        "description": "Richte die Tagesberechnung aus Leistungssensoren ein. Energie und Kosten werden aus den ausgewählten Werten in W integriert.",
+        "data": {
+          "name": "Name",
+          "update_interval": "Aktualisierungsintervall in Sekunden",
+          "currency": "Währung",
+          "price_unit": "Einheit des Strompreises",
+          "grid_mode": "Modus des Netzsensors",
+          "battery_mode": "Modus des Akkuspeicher-Sensors"
+        }
+      },
+      "sources": {
+        "title": "Quell-Entitäten",
+        "description": "Wähle die Leistungs- und Preis-Entitäten aus. Bei Bedarf können mehrere Entitäten gewählt werden, zum Beispiel für mehrere Akkuspeicher.",
+        "data": {
+          "price_entity": "Entität für aktuelle Stromkosten",
+          "solar_power_entities": "Solarproduktion Leistungssensor(en)",
+          "grid_power_entities": "Kombinierte Netzleistung Sensor(en)",
+          "grid_import_power_entities": "Netzbezug Leistungssensor(en)",
+          "grid_export_power_entities": "Netzeinspeisung Leistungssensor(en)",
+          "battery_power_entities": "Kombinierte Akkuspeicher-Leistungssensor(en)",
+          "battery_charge_power_entities": "Akkuspeicher-Ladeleistung Sensor(en)",
+          "battery_discharge_power_entities": "Akkuspeicher-Entladeleistung Sensor(en)"
+        }
+      }
+    },
+    "error": {
+      "required_entity": "Bitte mindestens eine Entität auswählen."
+    },
+    "abort": {
+      "already_configured": "Diese Instanz von Täglicher Energiefluss ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Optionen für Täglicher Energiefluss",
+        "description": "Passe die Berechnung an.",
+        "data": {
+          "name": "Name",
+          "update_interval": "Aktualisierungsintervall in Sekunden",
+          "currency": "Währung",
+          "price_unit": "Einheit des Strompreises",
+          "grid_mode": "Modus des Netzsensors",
+          "battery_mode": "Modus des Akkuspeicher-Sensors"
+        }
+      },
+      "sources": {
+        "title": "Quell-Entitäten",
+        "description": "Passe die Quell-Entitäten an.",
+        "data": {
+          "price_entity": "Entität für aktuelle Stromkosten",
+          "solar_power_entities": "Solarproduktion Leistungssensor(en)",
+          "grid_power_entities": "Kombinierte Netzleistung Sensor(en)",
+          "grid_import_power_entities": "Netzbezug Leistungssensor(en)",
+          "grid_export_power_entities": "Netzeinspeisung Leistungssensor(en)",
+          "battery_power_entities": "Kombinierte Akkuspeicher-Leistungssensor(en)",
+          "battery_charge_power_entities": "Akkuspeicher-Ladeleistung Sensor(en)",
+          "battery_discharge_power_entities": "Akkuspeicher-Entladeleistung Sensor(en)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "house_consumption_power": {
+        "name": "Hausverbrauch Leistung"
+      },
+      "solar_production_power": {
+        "name": "Solarproduktion Leistung"
+      },
+      "grid_import_power": {
+        "name": "Netzbezug Leistung"
+      },
+      "grid_export_power": {
+        "name": "Netzeinspeisung Leistung"
+      },
+      "battery_charge_power": {
+        "name": "Akkuspeicher-Ladeleistung"
+      },
+      "battery_discharge_power": {
+        "name": "Akkuspeicher-Entladeleistung"
+      },
+      "pv_self_consumption_power": {
+        "name": "PV-Eigenverbrauch Leistung"
+      },
+      "house_consumption_energy": {
+        "name": "Hausverbrauch heute"
+      },
+      "solar_production_energy": {
+        "name": "Solarproduktion heute"
+      },
+      "grid_import_energy": {
+        "name": "Netzbezug heute"
+      },
+      "grid_export_energy": {
+        "name": "Netzeinspeisung heute"
+      },
+      "battery_charge_energy": {
+        "name": "Akkuspeicher-Ladung heute"
+      },
+      "battery_discharge_energy": {
+        "name": "Akkuspeicher-Entladung heute"
+      },
+      "pv_self_consumption_energy": {
+        "name": "PV-Eigenverbrauch heute"
+      },
+      "autarky_percent": {
+        "name": "Autarkie heute"
+      },
+      "pv_self_consumption_percent": {
+        "name": "PV-Eigenverbrauch heute"
+      },
+      "grid_import_cost_rate": {
+        "name": "Netzbezug Kostenrate"
+      },
+      "grid_import_cost": {
+        "name": "Netzbezug Kosten heute"
+      }
+    }
+  },
+  "selector": {
+    "price_unit": {
+      "options": {
+        "currency_per_kwh": "Währung/kWh, zum Beispiel 0,29 €",
+        "minor_per_kwh": "Kleinere Währungseinheit/kWh, zum Beispiel 29 ct"
+      }
+    },
+    "grid_mode": {
+      "options": {
+        "combined_import_positive": "Kombinierte Netzleistung: positiv = Bezug, negativ = Einspeisung",
+        "combined_export_positive": "Kombinierte Netzleistung: positiv = Einspeisung, negativ = Bezug",
+        "separate": "Getrennte Sensoren für Netzbezug und Netzeinspeisung"
+      }
+    },
+    "battery_mode": {
+      "options": {
+        "combined_discharge_positive": "Kombinierte Akkuspeicher-Leistung: positiv = Entladung, negativ = Ladung",
+        "combined_charge_positive": "Kombinierte Akkuspeicher-Leistung: positiv = Ladung, negativ = Entladung",
+        "separate": "Getrennte Sensoren für Akkuspeicher-Ladung und -Entladung",
+        "none": "Kein Akkuspeicher"
+      }
+    }
+  }
+}

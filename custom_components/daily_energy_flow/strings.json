@@ -1,0 +1,149 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Daily Energy Flow",
+        "description": "Configure daily energy flow calculation from power sensors. Energy and costs are integrated from the selected W values.",
+        "data": {
+          "name": "Name",
+          "update_interval": "Update interval in seconds",
+          "currency": "Currency",
+          "price_unit": "Electricity price unit",
+          "grid_mode": "Grid sensor mode",
+          "battery_mode": "Battery storage sensor mode"
+        }
+      },
+      "sources": {
+        "title": "Source entities",
+        "description": "Select the power and price entities. Multiple entities can be selected where useful, for example for several battery storage systems.",
+        "data": {
+          "price_entity": "Current electricity price entity",
+          "solar_power_entities": "Solar production power sensor(s)",
+          "grid_power_entities": "Combined grid power sensor(s)",
+          "grid_import_power_entities": "Grid import power sensor(s)",
+          "grid_export_power_entities": "Grid export power sensor(s)",
+          "battery_power_entities": "Combined battery storage power sensor(s)",
+          "battery_charge_power_entities": "Battery storage charging power sensor(s)",
+          "battery_discharge_power_entities": "Battery storage discharging power sensor(s)"
+        }
+      }
+    },
+    "error": {
+      "required_entity": "Please select at least one entity."
+    },
+    "abort": {
+      "already_configured": "This Daily Energy Flow instance is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Daily Energy Flow options",
+        "description": "Adjust calculation settings.",
+        "data": {
+          "name": "Name",
+          "update_interval": "Update interval in seconds",
+          "currency": "Currency",
+          "price_unit": "Electricity price unit",
+          "grid_mode": "Grid sensor mode",
+          "battery_mode": "Battery storage sensor mode"
+        }
+      },
+      "sources": {
+        "title": "Source entities",
+        "description": "Adjust the source entities.",
+        "data": {
+          "price_entity": "Current electricity price entity",
+          "solar_power_entities": "Solar production power sensor(s)",
+          "grid_power_entities": "Combined grid power sensor(s)",
+          "grid_import_power_entities": "Grid import power sensor(s)",
+          "grid_export_power_entities": "Grid export power sensor(s)",
+          "battery_power_entities": "Combined battery storage power sensor(s)",
+          "battery_charge_power_entities": "Battery storage charging power sensor(s)",
+          "battery_discharge_power_entities": "Battery storage discharging power sensor(s)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "house_consumption_power": {
+        "name": "House consumption power"
+      },
+      "solar_production_power": {
+        "name": "Solar production power"
+      },
+      "grid_import_power": {
+        "name": "Grid import power"
+      },
+      "grid_export_power": {
+        "name": "Grid export power"
+      },
+      "battery_charge_power": {
+        "name": "Battery storage charging power"
+      },
+      "battery_discharge_power": {
+        "name": "Battery storage discharging power"
+      },
+      "pv_self_consumption_power": {
+        "name": "PV self-consumption power"
+      },
+      "house_consumption_energy": {
+        "name": "House consumption today"
+      },
+      "solar_production_energy": {
+        "name": "Solar production today"
+      },
+      "grid_import_energy": {
+        "name": "Grid import today"
+      },
+      "grid_export_energy": {
+        "name": "Grid export today"
+      },
+      "battery_charge_energy": {
+        "name": "Battery storage charge today"
+      },
+      "battery_discharge_energy": {
+        "name": "Battery storage discharge today"
+      },
+      "pv_self_consumption_energy": {
+        "name": "PV self-consumption today"
+      },
+      "autarky_percent": {
+        "name": "Autarky today"
+      },
+      "pv_self_consumption_percent": {
+        "name": "PV self-consumption today"
+      },
+      "grid_import_cost_rate": {
+        "name": "Grid import cost rate"
+      },
+      "grid_import_cost": {
+        "name": "Grid import cost today"
+      }
+    }
+  },
+  "selector": {
+    "price_unit": {
+      "options": {
+        "currency_per_kwh": "Currency/kWh, for example 0.29",
+        "minor_per_kwh": "Minor unit/kWh, for example 29 ct"
+      }
+    },
+    "grid_mode": {
+      "options": {
+        "combined_import_positive": "Combined grid power: positive import, negative export",
+        "combined_export_positive": "Combined grid power: positive export, negative import",
+        "separate": "Separate import and export power sensors"
+      }
+    },
+    "battery_mode": {
+      "options": {
+        "combined_discharge_positive": "Combined battery power: positive discharging, negative charging",
+        "combined_charge_positive": "Combined battery power: positive charging, negative discharging",
+        "separate": "Separate charging and discharging power sensors",
+        "none": "No battery storage"
+      }
+    }
+  }
+}
