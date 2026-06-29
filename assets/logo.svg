@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 128" role="img" aria-label="Daily Energy Flow logo">
+  <image href="../custom_components/daily_energy_flow/brand/icon.png" x="16" y="16" width="96" height="96"/>
+  <text x="128" y="61" font-family="DejaVu Sans, Arial, sans-serif" font-weight="700" font-size="36" fill="#1e2a3c">Daily Energy Flow</text>
+  <text x="128" y="92" font-family="DejaVu Sans, Arial, sans-serif" font-size="15" fill="#526070">Solar · Grid · Battery · Costs</text>
+  <rect x="128" y="108" width="300" height="7" rx="3.5" fill="#00ac70"/>
+  <rect x="313" y="108" width="115" height="7" rx="3.5" fill="#2069ff"/>
+  <rect x="388" y="108" width="40" height="7" rx="3.5" fill="#ffb81c"/>
+</svg>

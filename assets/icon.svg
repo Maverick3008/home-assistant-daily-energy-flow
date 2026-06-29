@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Daily Energy Flow icon">
+  <rect x="10" y="10" width="236" height="236" rx="46" fill="#f6f9fc"/>
+  <circle cx="76" cy="72" r="28" fill="#ffb81c"/>
+  <g stroke="#ffb81c" stroke-width="6" stroke-linecap="round">
+    <path d="M76 20v-10"/><path d="M76 134v-10"/><path d="M24 72h-10"/><path d="M138 72h-10"/>
+    <path d="M39 35l-8-8"/><path d="M121 117l-8-8"/><path d="M39 109l-8 8"/><path d="M121 27l-8 8"/>
+  </g>
+  <path d="M42 126a86 86 0 0 1 172-2" fill="none" stroke="#2069ff" stroke-width="11" stroke-linecap="round"/>
+  <path d="M214 128a86 86 0 0 1-172 2" fill="none" stroke="#00ac70" stroke-width="11" stroke-linecap="round"/>
+  <path d="M78 134l50-42 50 42H78z" fill="#1b2738"/>
+  <rect x="88" y="132" width="80" height="58" rx="8" fill="#1b2738"/>
+  <rect x="116" y="154" width="24" height="36" rx="4" fill="#f6f9fc"/>
+  <path d="M131 47l-20 45 21-4-11 36 32-50-20 4z" fill="#2069ff"/>
+  <rect x="152" y="62" width="51" height="29" rx="7" fill="none" stroke="#1b2738" stroke-width="5"/>
+  <rect x="204" y="71" width="7" height="11" rx="3" fill="#1b2738"/>
+  <rect x="160" y="70" width="29" height="13" rx="4" fill="#00ac70"/>
+</svg>

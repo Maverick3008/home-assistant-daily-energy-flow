@@ -118,6 +118,58 @@ Die Integration erstellt diese Sensoren:
 - Die Tageswerte werden um Mitternacht zurückgesetzt.
 - Die Integration speichert die heutigen Werte regelmäßig und stellt sie nach einem Home-Assistant-Neustart wieder her.
 
+## Fehlerbehebung: Integration erscheint nicht
+
+Wenn **Daily Energy Flow** nach der Installation nicht unter **Einstellungen → Geräte & Dienste → Integration hinzufügen** erscheint, prüfe diese Punkte:
+
+1. Der Ordner muss exakt hier liegen:
+
+```text
+/config/custom_components/daily_energy_flow/
+```
+
+Nicht korrekt wäre zum Beispiel:
+
+```text
+/config/custom_components/home-assistant-daily-energy-flow/custom_components/daily_energy_flow/
+```
+
+2. In diesem Ordner müssen direkt diese Dateien liegen:
+
+```text
+__init__.py
+manifest.json
+config_flow.py
+sensor.py
+manager.py
+const.py
+strings.json
+translations/
+brand/
+```
+
+3. Starte Home Assistant vollständig neu. Ein reines Neuladen von YAML reicht nicht.
+4. Leere danach ggf. den Browser-Cache oder lade die Home-Assistant-Seite mit `Strg + F5` neu.
+5. Suche nach **Daily Energy Flow**. In der deutschen Oberfläche kann auch **Täglicher Energiefluss** angezeigt werden.
+6. Wenn sie weiterhin fehlt, prüfe **Einstellungen → System → Protokolle** auf Fehler zu `daily_energy_flow`.
+
+## Icons und Logos
+
+Das Repository enthält lokale Home-Assistant-Brand-Assets in:
+
+```text
+custom_components/daily_energy_flow/brand/
+```
+
+Enthaltene Dateien:
+
+- `icon.png` und `icon@2x.png`
+- `dark_icon.png` und `dark_icon@2x.png`
+- `logo.png` und `logo@2x.png`
+- `dark_logo.png` und `dark_logo@2x.png`
+
+Home Assistant ab Version 2026.3 kann diese Dateien direkt für die Integrations-Kachel und die Konfigurationsseiten verwenden.
+
 ## Lizenz
 
 MIT License

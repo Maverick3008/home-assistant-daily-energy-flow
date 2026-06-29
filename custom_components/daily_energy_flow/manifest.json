@@ -6,9 +6,8 @@
   ],
   "config_flow": true,
   "documentation": "https://github.com/Maverick3008/home-assistant-daily-energy-flow",
-  "integration_type": "service",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/Maverick3008/home-assistant-daily-energy-flow/issues",
   "requirements": [],
-  "version": "0.1.1"
+  "version": "0.1.3"
 }
