@@ -2,15 +2,19 @@
 
 [English documentation](README.md)
 
+Täglicher Energiefluss ist eine Home-Assistant-Custom-Integration für Stromverbrauch, PV-Erzeugung, Netzbezug und Akkuspeicher.
 
-Täglicher Energiefluss ist eine Home-Assistant-Custom-Integration, die Tagesenergie und Kosten aus aktuellen Leistungssensoren berechnet.
+Die Integration trennt jetzt bewusst zwischen **Leistung** und **Energie**:
 
-Die Integration ist für Setups mit Solarproduktion, Netzsensor und optionalem Akkuspeicher gedacht. Sie erstellt aktuelle Leistungssensoren in W und Tagesenergiesensoren in kWh. Die Netzbezugskosten werden über den Tag mit dem jeweils aktuellen Strompreis aufsummiert. Dadurch werden auch Preisänderungen im Laufe des Tages korrekt berücksichtigt.
+- Die aktuellen Anzeigen in **W** werden weiterhin live aus Leistungssensoren berechnet.
+- Die Tageswerte in **kWh**, Autarkie, PV-Eigenverbrauch und Netzbezugskosten werden aus bereits vorhandenen Energie-Sensoren in **kWh oder Wh** berechnet.
+
+Dadurch werden vorhandene `utility_meter`-, Wechselrichter-, Shelly-, myenergi- oder Hoymiles-Tageszähler genutzt, statt Tages-kWh erneut aus Werten in W zu integrieren.
 
 ## Funktionen
 
 - Hausverbrauch als aktuelle Leistung ohne Akkuspeicher-Ladung
-- Hausverbrauch heute in kWh
+- Hausverbrauch heute in kWh aus vorhandenen Energie-Sensoren
 - Netzbezug als aktuelle Leistung und heute in kWh
 - Netzeinspeisung als aktuelle Leistung und heute in kWh
 - Netzbezug Kostenrate und Netzbezug Kosten heute
@@ -19,25 +23,57 @@ Die Integration ist für Setups mit Solarproduktion, Netzsensor und optionalem A
 - Akkuspeicher-Entladeleistung und Akkuspeicher-Entladung heute
 - PV-Eigenverbrauch als Leistung, kWh und Prozent
 - Autarkie heute in Prozent
-- Kombinierte oder getrennte Sensoren für Netzbezug/Netzeinspeisung
-- Kombinierte oder getrennte Sensoren für Akkuspeicher-Ladung/Entladung
+- Kombinierte oder getrennte Sensoren für Netzbezug/Netzeinspeisung bei der Live-Leistung
+- Kombinierte oder getrennte Sensoren für Akkuspeicher-Ladung/Entladung bei der Live-Leistung
 - Mehrere Quell-Entitäten, zum Beispiel für mehrere Hoymiles-Akkus
 - Deutsche und englische Übersetzung
+- Lokale Icons und Logos im `brand/`-Ordner
+
+## Wichtige Änderung ab Version 0.2.0
+
+Vorher wurden Tages-kWh intern aus W-Werten integriert. Ab Version **0.2.0** gilt:
+
+- **W-Sensoren**: nur für Live-Anzeigen.
+- **Energie-Sensoren in kWh/Wh**: Grundlage für Tages-kWh, Hausverbrauch heute, Autarkie, PV-Eigenverbrauch und variable Netzbezugskosten.
+
+Die Energie-Sensoren sollten Tageswerte sein, also zum Beispiel `..._today`, `..._heute` oder `utility_meter`-Sensoren mit täglichem Zyklus.
 
 ## Berechnung
 
-Die Integration geht davon aus, dass alle Quellwerte Leistung in W liefern.
+### Live-Leistung in W
 
 Hausverbrauch ohne Akkuspeicher-Ladung:
 
 ```text
-hausverbrauch = solarproduktion + netzbezug - netzeinspeisung + akku_entladung - akku_ladung
+hausverbrauch_leistung = solarproduktion_leistung + netzbezug_leistung - netzeinspeisung_leistung + akku_entladeleistung - akku_ladeleistung
 ```
 
-PV-Eigenverbrauch:
+PV-Eigenverbrauch Leistung:
 
 ```text
-pv_eigenverbrauch = solarproduktion - netzeinspeisung
+pv_eigenverbrauch_leistung = solarproduktion_leistung - netzeinspeisung_leistung
+```
+
+### Tageswerte in kWh
+
+Die folgenden Werte werden aus vorhandenen Energie-Sensoren gelesen:
+
+- Solarproduktion heute
+- Netzbezug heute
+- Netzeinspeisung heute
+- Akkuspeicher-Ladung heute
+- Akkuspeicher-Entladung heute
+
+Hausverbrauch heute ohne Akkuspeicher-Ladung:
+
+```text
+hausverbrauch_heute = solarproduktion_heute + netzbezug_heute - netzeinspeisung_heute + akku_entladung_heute - akku_ladung_heute
+```
+
+PV-Eigenverbrauch heute:
+
+```text
+pv_eigenverbrauch_heute = solarproduktion_heute - netzeinspeisung_heute
 ```
 
 Autarkie heute:
@@ -52,24 +88,40 @@ PV-Eigenverbrauch heute:
 pv_eigenverbrauch_prozent = 100 * pv_eigenverbrauch_heute / solarproduktion_heute
 ```
 
-Netzbezugskosten:
+### Variable Netzbezugskosten
+
+Die Integration berechnet die Kosten nicht einfach mit dem aktuellen Tagespreis neu, sondern summiert sie fortlaufend über den Tag:
 
 ```text
-netzbezug_kostenrate = netzbezug_leistung / 1000 * aktueller_strompreis
+neue_kosten = delta_netzbezug_kwh * strompreis_zu_diesem_zeitpunkt
 ```
 
-Diese Kostenrate wird über die Zeit integriert. Wenn sich der Strompreis im Laufe des Tages ändert, wird nur der jeweilige Zeitraum mit diesem Preis berechnet.
+Dadurch können sich Strompreise im Laufe des Tages ändern, ohne dass frühere kWh nachträglich mit dem neuen Preis umgerechnet werden.
 
 ## Empfohlene Einrichtung für dein Shelly-/Hoymiles-Setup
 
 Für dein Setup kannst du voraussichtlich diese Auswahl verwenden:
 
+### Live-Leistung
+
 - Aktuelle Stromkosten: `input_number.aktueller_strompreis`
 - Solarproduktion Leistung: `sensor.shellyplusplugs_e465b8b31a7c_switch_0_power`
 - Kombinierte Netzleistung: `sensor.shellypro3em_a0dd6ca00d0c_total_active_power`
 - Netzsensor-Modus: `Kombinierte Netzleistung: positiv = Bezug, negativ = Einspeisung`
-- Akkuspeicher-Modus für Hoymiles `bat_p`: `Kombinierte Akkuleistung: positiv = Entladung, negativ = Ladung`
-- Akkuspeicher-Leistung: entweder beide Hoymiles-`bat_p`-Sensoren auswählen oder deinen bereits vorhandenen kombinierten Helper verwenden
+- Akkuspeicher-Modus für Hoymiles `bat_p`: `Kombinierte Akkuspeicher-Leistung: positiv = Entladung, negativ = Ladung`
+- Akkuspeicher-Leistung: beide Hoymiles-`bat_p`-Sensoren oder ein vorhandener kombinierter Helper
+
+### Tages-Energie
+
+Wähle hier bereits vorhandene Tageszähler aus, zum Beispiel:
+
+- Solarproduktion Energie heute: dein Balkonkraftwerk-/PV-Ertrag-heute-Sensor
+- Netzbezug Energie heute: dein Netzbezug-heute-Sensor
+- Netzeinspeisung Energie heute: dein Einspeisung-heute-Sensor
+- Akkuspeicher-Ladung heute: dein Akku-Ladung-heute-Sensor
+- Akkuspeicher-Entladung heute: dein Akku-Entladung-heute-Sensor
+
+Die Integration akzeptiert Energiequellen in `kWh`, `Wh` und `MWh`. `Wh` wird automatisch nach `kWh` umgerechnet.
 
 ## Installation
 
@@ -113,10 +165,11 @@ Die Integration erstellt diese Sensoren:
 
 ## Hinweise
 
-- Die Quell-Sensoren sollten Werte in W liefern.
+- Leistungsquellen sollten Werte in W liefern.
+- Energiequellen sollten Tageswerte in kWh oder Wh liefern.
 - Die Strompreis-Entität sollte entweder Währung/kWh liefern, zum Beispiel `0.29`, oder ct/kWh, zum Beispiel `29`.
-- Die Tageswerte werden um Mitternacht zurückgesetzt.
-- Die Integration speichert die heutigen Werte regelmäßig und stellt sie nach einem Home-Assistant-Neustart wieder her.
+- Die kWh-Tageswerte werden nicht intern aus W integriert, sondern direkt aus deinen ausgewählten Energie-Sensoren gelesen.
+- Die Integration speichert nur den fortlaufenden Kostenstand für variable Netzbezugskosten.
 
 ## Fehlerbehebung: Integration erscheint nicht
 
@@ -167,8 +220,6 @@ Enthaltene Dateien:
 - `dark_icon.png` und `dark_icon@2x.png`
 - `logo.png` und `logo@2x.png`
 - `dark_logo.png` und `dark_logo@2x.png`
-
-Home Assistant ab Version 2026.3 kann diese Dateien direkt für die Integrations-Kachel und die Konfigurationsseiten verwenden.
 
 ## Lizenz
 

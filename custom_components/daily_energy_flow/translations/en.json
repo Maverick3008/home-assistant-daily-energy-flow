@@ -3,28 +3,33 @@
     "step": {
       "user": {
         "title": "Daily Energy Flow",
-        "description": "Configure daily energy flow calculation from power sensors. Energy and costs are integrated from the selected W values.",
+        "description": "Set up live power display from W sensors and daily calculations from existing energy sensors in kWh or Wh.",
         "data": {
           "name": "Name",
           "update_interval": "Update interval in seconds",
           "currency": "Currency",
           "price_unit": "Electricity price unit",
-          "grid_mode": "Grid sensor mode",
-          "battery_mode": "Battery storage sensor mode"
+          "grid_mode": "Grid power sensor mode",
+          "battery_mode": "Battery storage power sensor mode"
         }
       },
       "sources": {
         "title": "Source entities",
-        "description": "Select the power and price entities. Multiple entities can be selected where useful, for example for several battery storage systems.",
+        "description": "Select live power entities in W and existing daily energy entities in kWh/Wh. Daily percentages and kWh values are calculated only from the selected energy entities.",
         "data": {
           "price_entity": "Current electricity price entity",
           "solar_power_entities": "Solar production power sensor(s)",
+          "solar_energy_entities": "Solar production energy sensor(s) today",
           "grid_power_entities": "Combined grid power sensor(s)",
           "grid_import_power_entities": "Grid import power sensor(s)",
           "grid_export_power_entities": "Grid export power sensor(s)",
+          "grid_import_energy_entities": "Grid import energy sensor(s) today",
+          "grid_export_energy_entities": "Grid export energy sensor(s) today",
           "battery_power_entities": "Combined battery storage power sensor(s)",
           "battery_charge_power_entities": "Battery storage charging power sensor(s)",
-          "battery_discharge_power_entities": "Battery storage discharging power sensor(s)"
+          "battery_discharge_power_entities": "Battery storage discharging power sensor(s)",
+          "battery_charge_energy_entities": "Battery storage charge energy sensor(s) today",
+          "battery_discharge_energy_entities": "Battery storage discharge energy sensor(s) today"
         }
       }
     },
@@ -45,22 +50,27 @@
           "update_interval": "Update interval in seconds",
           "currency": "Currency",
           "price_unit": "Electricity price unit",
-          "grid_mode": "Grid sensor mode",
-          "battery_mode": "Battery storage sensor mode"
+          "grid_mode": "Grid power sensor mode",
+          "battery_mode": "Battery storage power sensor mode"
         }
       },
       "sources": {
         "title": "Source entities",
-        "description": "Adjust the source entities.",
+        "description": "Adjust live power and existing daily energy source entities.",
         "data": {
           "price_entity": "Current electricity price entity",
           "solar_power_entities": "Solar production power sensor(s)",
+          "solar_energy_entities": "Solar production energy sensor(s) today",
           "grid_power_entities": "Combined grid power sensor(s)",
           "grid_import_power_entities": "Grid import power sensor(s)",
           "grid_export_power_entities": "Grid export power sensor(s)",
+          "grid_import_energy_entities": "Grid import energy sensor(s) today",
+          "grid_export_energy_entities": "Grid export energy sensor(s) today",
           "battery_power_entities": "Combined battery storage power sensor(s)",
           "battery_charge_power_entities": "Battery storage charging power sensor(s)",
-          "battery_discharge_power_entities": "Battery storage discharging power sensor(s)"
+          "battery_discharge_power_entities": "Battery storage discharging power sensor(s)",
+          "battery_charge_energy_entities": "Battery storage charge energy sensor(s) today",
+          "battery_discharge_energy_entities": "Battery storage discharge energy sensor(s) today"
         }
       }
     }

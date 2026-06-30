@@ -16,18 +16,23 @@ from .const import (
     BATTERY_MODE_COMBINED_DISCHARGE_POSITIVE,
     BATTERY_MODE_NONE,
     BATTERY_MODE_SEPARATE,
+    CONF_BATTERY_CHARGE_ENERGY_ENTITIES,
     CONF_BATTERY_CHARGE_POWER_ENTITIES,
+    CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES,
     CONF_BATTERY_DISCHARGE_POWER_ENTITIES,
     CONF_BATTERY_MODE,
     CONF_BATTERY_POWER_ENTITIES,
     CONF_CURRENCY,
+    CONF_GRID_EXPORT_ENERGY_ENTITIES,
     CONF_GRID_EXPORT_POWER_ENTITIES,
+    CONF_GRID_IMPORT_ENERGY_ENTITIES,
     CONF_GRID_IMPORT_POWER_ENTITIES,
     CONF_GRID_MODE,
     CONF_GRID_POWER_ENTITIES,
     CONF_NAME,
     CONF_PRICE_ENTITY,
     CONF_PRICE_UNIT,
+    CONF_SOLAR_ENERGY_ENTITIES,
     CONF_SOLAR_POWER_ENTITIES,
     CONF_UPDATE_INTERVAL,
     DEFAULT_NAME,
@@ -41,6 +46,10 @@ from .const import (
 )
 
 POWER_ENTITY_SELECTOR = selector.EntitySelector(
+    selector.EntitySelectorConfig(domain=["sensor", "number", "input_number"], multiple=True)
+)
+
+ENERGY_ENTITY_SELECTOR = selector.EntitySelector(
     selector.EntitySelectorConfig(domain=["sensor", "number", "input_number"], multiple=True)
 )
 
@@ -110,6 +119,9 @@ def _sources_schema(defaults: dict[str, Any]) -> vol.Schema:
     fields: dict[Any, Any] = {
         vol.Required(CONF_PRICE_ENTITY, default=defaults.get(CONF_PRICE_ENTITY)): PRICE_ENTITY_SELECTOR,
         vol.Required(CONF_SOLAR_POWER_ENTITIES, default=_as_list(defaults.get(CONF_SOLAR_POWER_ENTITIES))): POWER_ENTITY_SELECTOR,
+        vol.Required(CONF_SOLAR_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_SOLAR_ENERGY_ENTITIES))): ENERGY_ENTITY_SELECTOR,
+        vol.Required(CONF_GRID_IMPORT_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_GRID_IMPORT_ENERGY_ENTITIES))): ENERGY_ENTITY_SELECTOR,
+        vol.Required(CONF_GRID_EXPORT_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_GRID_EXPORT_ENERGY_ENTITIES))): ENERGY_ENTITY_SELECTOR,
     }
 
     if defaults.get(CONF_GRID_MODE) == GRID_MODE_SEPARATE:
@@ -120,10 +132,14 @@ def _sources_schema(defaults: dict[str, Any]) -> vol.Schema:
 
     battery_mode = defaults.get(CONF_BATTERY_MODE)
     if battery_mode == BATTERY_MODE_SEPARATE:
-        fields[vol.Optional(CONF_BATTERY_CHARGE_POWER_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_CHARGE_POWER_ENTITIES)))] = POWER_ENTITY_SELECTOR
-        fields[vol.Optional(CONF_BATTERY_DISCHARGE_POWER_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_DISCHARGE_POWER_ENTITIES)))] = POWER_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_CHARGE_POWER_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_CHARGE_POWER_ENTITIES)))] = POWER_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_DISCHARGE_POWER_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_DISCHARGE_POWER_ENTITIES)))] = POWER_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_CHARGE_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_CHARGE_ENERGY_ENTITIES)))] = ENERGY_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES)))] = ENERGY_ENTITY_SELECTOR
     elif battery_mode != BATTERY_MODE_NONE:
-        fields[vol.Optional(CONF_BATTERY_POWER_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_POWER_ENTITIES)))] = POWER_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_POWER_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_POWER_ENTITIES)))] = POWER_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_CHARGE_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_CHARGE_ENERGY_ENTITIES)))] = ENERGY_ENTITY_SELECTOR
+        fields[vol.Required(CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES, default=_as_list(defaults.get(CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES)))] = ENERGY_ENTITY_SELECTOR
 
     return vol.Schema(fields)
 
@@ -136,6 +152,12 @@ def _validate_sources(data: dict[str, Any]) -> dict[str, str]:
         errors[CONF_PRICE_ENTITY] = "required_entity"
     if not _as_list(data.get(CONF_SOLAR_POWER_ENTITIES)):
         errors[CONF_SOLAR_POWER_ENTITIES] = "required_entity"
+    if not _as_list(data.get(CONF_SOLAR_ENERGY_ENTITIES)):
+        errors[CONF_SOLAR_ENERGY_ENTITIES] = "required_entity"
+    if not _as_list(data.get(CONF_GRID_IMPORT_ENERGY_ENTITIES)):
+        errors[CONF_GRID_IMPORT_ENERGY_ENTITIES] = "required_entity"
+    if not _as_list(data.get(CONF_GRID_EXPORT_ENERGY_ENTITIES)):
+        errors[CONF_GRID_EXPORT_ENERGY_ENTITIES] = "required_entity"
 
     if data.get(CONF_GRID_MODE) == GRID_MODE_SEPARATE:
         if not _as_list(data.get(CONF_GRID_IMPORT_POWER_ENTITIES)):
@@ -143,13 +165,29 @@ def _validate_sources(data: dict[str, Any]) -> dict[str, str]:
     elif not _as_list(data.get(CONF_GRID_POWER_ENTITIES)):
         errors[CONF_GRID_POWER_ENTITIES] = "required_entity"
 
+    battery_mode = data.get(CONF_BATTERY_MODE)
+    if battery_mode == BATTERY_MODE_SEPARATE:
+        if not _as_list(data.get(CONF_BATTERY_CHARGE_POWER_ENTITIES)):
+            errors[CONF_BATTERY_CHARGE_POWER_ENTITIES] = "required_entity"
+        if not _as_list(data.get(CONF_BATTERY_DISCHARGE_POWER_ENTITIES)):
+            errors[CONF_BATTERY_DISCHARGE_POWER_ENTITIES] = "required_entity"
+    elif battery_mode != BATTERY_MODE_NONE:
+        if not _as_list(data.get(CONF_BATTERY_POWER_ENTITIES)):
+            errors[CONF_BATTERY_POWER_ENTITIES] = "required_entity"
+
+    if battery_mode != BATTERY_MODE_NONE:
+        if not _as_list(data.get(CONF_BATTERY_CHARGE_ENERGY_ENTITIES)):
+            errors[CONF_BATTERY_CHARGE_ENERGY_ENTITIES] = "required_entity"
+        if not _as_list(data.get(CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES)):
+            errors[CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES] = "required_entity"
+
     return errors
 
 
 class DailyEnergyFlowConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Daily Energy Flow."""
 
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self) -> None:
         """Initialize the config flow."""

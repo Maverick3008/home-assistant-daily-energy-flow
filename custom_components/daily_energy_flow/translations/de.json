@@ -3,28 +3,33 @@
     "step": {
       "user": {
         "title": "Täglicher Energiefluss",
-        "description": "Richte die Tagesberechnung aus Leistungssensoren ein. Energie und Kosten werden aus den ausgewählten Werten in W integriert.",
+        "description": "Richte Live-Leistungsanzeigen aus W-Sensoren ein. Tages-kWh, Prozentwerte und Kosten werden aus vorhandenen Energie-Sensoren in kWh oder Wh berechnet.",
         "data": {
           "name": "Name",
           "update_interval": "Aktualisierungsintervall in Sekunden",
           "currency": "Währung",
           "price_unit": "Einheit des Strompreises",
-          "grid_mode": "Modus des Netzsensors",
-          "battery_mode": "Modus des Akkuspeicher-Sensors"
+          "grid_mode": "Modus des Netzleistungs-Sensors",
+          "battery_mode": "Modus des Akkuspeicher-Leistungssensors"
         }
       },
       "sources": {
         "title": "Quell-Entitäten",
-        "description": "Wähle die Leistungs- und Preis-Entitäten aus. Bei Bedarf können mehrere Entitäten gewählt werden, zum Beispiel für mehrere Akkuspeicher.",
+        "description": "Wähle Live-Leistungssensoren in W und vorhandene Tages-Energie-Sensoren in kWh/Wh. Tages-kWh und Prozentwerte werden ausschließlich aus den Energie-Sensoren berechnet.",
         "data": {
           "price_entity": "Entität für aktuelle Stromkosten",
           "solar_power_entities": "Solarproduktion Leistungssensor(en)",
+          "solar_energy_entities": "Solarproduktion Energie-Sensor(en) heute",
           "grid_power_entities": "Kombinierte Netzleistung Sensor(en)",
           "grid_import_power_entities": "Netzbezug Leistungssensor(en)",
           "grid_export_power_entities": "Netzeinspeisung Leistungssensor(en)",
+          "grid_import_energy_entities": "Netzbezug Energie-Sensor(en) heute",
+          "grid_export_energy_entities": "Netzeinspeisung Energie-Sensor(en) heute",
           "battery_power_entities": "Kombinierte Akkuspeicher-Leistungssensor(en)",
           "battery_charge_power_entities": "Akkuspeicher-Ladeleistung Sensor(en)",
-          "battery_discharge_power_entities": "Akkuspeicher-Entladeleistung Sensor(en)"
+          "battery_discharge_power_entities": "Akkuspeicher-Entladeleistung Sensor(en)",
+          "battery_charge_energy_entities": "Akkuspeicher-Ladung Energie-Sensor(en) heute",
+          "battery_discharge_energy_entities": "Akkuspeicher-Entladung Energie-Sensor(en) heute"
         }
       }
     },
@@ -45,22 +50,27 @@
           "update_interval": "Aktualisierungsintervall in Sekunden",
           "currency": "Währung",
           "price_unit": "Einheit des Strompreises",
-          "grid_mode": "Modus des Netzsensors",
-          "battery_mode": "Modus des Akkuspeicher-Sensors"
+          "grid_mode": "Modus des Netzleistungs-Sensors",
+          "battery_mode": "Modus des Akkuspeicher-Leistungssensors"
         }
       },
       "sources": {
         "title": "Quell-Entitäten",
-        "description": "Passe die Quell-Entitäten an.",
+        "description": "Passe die Live-Leistungs- und vorhandenen Tages-Energiequellen an.",
         "data": {
           "price_entity": "Entität für aktuelle Stromkosten",
           "solar_power_entities": "Solarproduktion Leistungssensor(en)",
+          "solar_energy_entities": "Solarproduktion Energie-Sensor(en) heute",
           "grid_power_entities": "Kombinierte Netzleistung Sensor(en)",
           "grid_import_power_entities": "Netzbezug Leistungssensor(en)",
           "grid_export_power_entities": "Netzeinspeisung Leistungssensor(en)",
+          "grid_import_energy_entities": "Netzbezug Energie-Sensor(en) heute",
+          "grid_export_energy_entities": "Netzeinspeisung Energie-Sensor(en) heute",
           "battery_power_entities": "Kombinierte Akkuspeicher-Leistungssensor(en)",
           "battery_charge_power_entities": "Akkuspeicher-Ladeleistung Sensor(en)",
-          "battery_discharge_power_entities": "Akkuspeicher-Entladeleistung Sensor(en)"
+          "battery_discharge_power_entities": "Akkuspeicher-Entladeleistung Sensor(en)",
+          "battery_charge_energy_entities": "Akkuspeicher-Ladung Energie-Sensor(en) heute",
+          "battery_discharge_energy_entities": "Akkuspeicher-Entladung Energie-Sensor(en) heute"
         }
       }
     }

@@ -2,51 +2,87 @@
 
 [Deutsche Dokumentation](README.de.md)
 
+Daily Energy Flow is a Home Assistant custom integration for household consumption, solar production, grid import/export and battery storage.
 
-Daily Energy Flow is a Home Assistant custom integration that calculates daily energy and cost values from live power sensors.
+The integration now separates **power** and **energy** on purpose:
 
-It is designed for setups with solar production, a grid meter and an optional battery storage system. The integration creates current power sensors in W and daily energy sensors in kWh. Grid import costs are accumulated over the day using the current electricity price at each update, so changing prices during the day are handled correctly.
+- Current values in **W** are still calculated live from power sensors.
+- Daily values in **kWh**, self-sufficiency, PV self-consumption and grid import costs are calculated from existing energy sensors in **kWh or Wh**.
 
-## German summary
+This lets you use existing `utility_meter`, inverter, Shelly, myenergi or Hoymiles daily energy sensors instead of integrating W values again inside the integration.
 
-Daily Energy Flow berechnet den heutigen Hausverbrauch ohne Akkuspeicher-Ladung, Netzbezug/Netzeinspeisung, Solarproduktion, Akkuspeicher-Ladung/-Entladung, Autarkie, PV-Eigenverbrauch und variable Netzbezugskosten aus aktuellen Leistungssensoren. Die vollständige deutsche Anleitung findest du in [`README.de.md`](README.de.md).
+## Deutsche Kurzfassung
+
+Daily Energy Flow nutzt Live-Leistungssensoren in W nur für aktuelle Anzeigen. Tages-kWh, Hausverbrauch heute, Autarkie, PV-Eigenverbrauch und variable Netzbezugskosten werden ab Version 0.2.0 aus vorhandenen Energie-Sensoren in kWh/Wh berechnet. Die vollständige deutsche Anleitung findest du in [`README.de.md`](README.de.md).
 
 ## Features
 
-- House consumption power without battery storage charging
-- House consumption today in kWh
+- House consumption power excluding battery storage charging
+- House consumption today in kWh from existing energy sensors
 - Grid import power and grid import today in kWh
 - Grid export power and grid export today in kWh
 - Grid import cost rate and grid import cost today
 - Solar production power and solar production today in kWh
 - Battery storage charging/discharging power and energy today
 - PV self-consumption power, kWh and percentage
-- Autarky percentage for today
-- Combined or separate grid import/export sensors
-- Combined or separate battery charge/discharge sensors
+- Self-sufficiency percentage for today
+- Combined or separate grid import/export sensors for live power
+- Combined or separate battery charge/discharge sensors for live power
 - Multiple source entities for solar and battery storage systems
 - German and English translations
+- Local brand icons and logos
+
+## Important change in version 0.2.0
+
+Earlier versions integrated daily kWh internally from W values. Starting with **0.2.0**:
+
+- **Power sensors** are used only for live current values.
+- **Energy sensors in kWh/Wh** are used for daily kWh, house consumption today, self-sufficiency, PV self-consumption and variable grid import costs.
+
+The energy sensors should be daily counters, for example `..._today`, `..._heute` or `utility_meter` sensors with a daily cycle.
 
 ## Calculation
 
-The integration assumes all source values are power values in W.
+### Live power in W
 
-House consumption without battery charging:
+House consumption excluding battery storage charging:
 
 ```text
-house_consumption = solar_production + grid_import - grid_export + battery_discharge - battery_charge
+house_consumption_power = solar_production_power + grid_import_power - grid_export_power + battery_discharge_power - battery_charge_power
 ```
 
-PV self-consumption:
+PV self-consumption power:
 
 ```text
-pv_self_consumption = solar_production - grid_export
+pv_self_consumption_power = solar_production_power - grid_export_power
 ```
 
-Autarky today:
+### Daily values in kWh
+
+The following values are read from existing energy sensors:
+
+- Solar production today
+- Grid import today
+- Grid export today
+- Battery storage charge today
+- Battery storage discharge today
+
+House consumption today excluding battery storage charging:
 
 ```text
-autarky = 100 * (1 - grid_import_today / house_consumption_today)
+house_consumption_today = solar_production_today + grid_import_today - grid_export_today + battery_discharge_today - battery_charge_today
+```
+
+PV self-consumption today:
+
+```text
+pv_self_consumption_today = solar_production_today - grid_export_today
+```
+
+Self-sufficiency today:
+
+```text
+self_sufficiency = 100 * (1 - grid_import_today / house_consumption_today)
 ```
 
 PV self-consumption today:
@@ -55,17 +91,21 @@ PV self-consumption today:
 pv_self_consumption_percent = 100 * pv_self_consumption_today / solar_production_today
 ```
 
-Grid import costs:
+### Variable grid import costs
+
+Grid import costs are accumulated over the day using the delta of the existing grid import energy sensor:
 
 ```text
-grid_import_cost_rate = grid_import_power / 1000 * current_electricity_price
+new_cost = delta_grid_import_kwh * electricity_price_at_that_time
 ```
 
-The cost rate is integrated over time, so a changing electricity price is accumulated correctly.
+This means changing electricity prices during the day do not retroactively recalculate earlier kWh with the new price.
 
 ## Recommended setup for a Shelly / Hoymiles setup
 
 For a setup like this:
+
+### Live power
 
 - Electricity price: `input_number.aktueller_strompreis`
 - Solar production power: `sensor.shellyplusplugs_e465b8b31a7c_switch_0_power`
@@ -73,6 +113,18 @@ For a setup like this:
 - Grid mode: `Combined grid power: positive import, negative export`
 - Battery power mode for Hoymiles `bat_p`: `Combined battery power: positive discharging, negative charging`
 - Battery power sensors: select both Hoymiles battery power sensors, or one combined helper if you already have one
+
+### Daily energy
+
+Select existing daily counters, for example:
+
+- Solar production energy today: your PV / balcony solar yield today sensor
+- Grid import energy today: your grid import today sensor
+- Grid export energy today: your grid export today sensor
+- Battery storage charge today: your battery charge today sensor
+- Battery storage discharge today: your battery discharge today sensor
+
+Energy sources in `kWh`, `Wh` and `MWh` are supported. `Wh` is converted to `kWh` automatically.
 
 ## Installation
 
@@ -109,17 +161,18 @@ The integration creates these sensors:
 - Battery storage discharge today
 - PV self-consumption power
 - PV self-consumption today
-- Autarky today
+- Self-sufficiency today
 - PV self-consumption today
 - Grid import cost rate
 - Grid import cost today
 
 ## Notes
 
-- Source sensors should provide W.
+- Power sources should provide W.
+- Energy sources should provide daily values in kWh or Wh.
 - The electricity price entity should provide either currency/kWh, for example `0.29`, or minor units/kWh, for example `29` ct/kWh.
-- Daily totals reset at midnight.
-- The integration stores today's totals periodically and restores them after a Home Assistant restart.
+- Daily kWh values are not integrated internally from W; they are read from the selected energy sensors.
+- The integration stores only the ongoing variable-price grid import cost state.
 
 ## Troubleshooting: Integration does not appear
 
@@ -170,8 +223,6 @@ Included files:
 - `dark_icon.png` and `dark_icon@2x.png`
 - `logo.png` and `logo@2x.png`
 - `dark_logo.png` and `dark_logo@2x.png`
-
-Home Assistant 2026.3 or newer can use these files directly for the integration tile and configuration pages.
 
 ## License
 

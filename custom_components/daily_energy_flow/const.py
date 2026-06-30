@@ -15,6 +15,8 @@ CONF_UPDATE_INTERVAL: Final = "update_interval"
 CONF_CURRENCY: Final = "currency"
 CONF_PRICE_ENTITY: Final = "price_entity"
 CONF_PRICE_UNIT: Final = "price_unit"
+
+# Live power sources in W. These are used only for the current power sensors.
 CONF_SOLAR_POWER_ENTITIES: Final = "solar_power_entities"
 CONF_GRID_MODE: Final = "grid_mode"
 CONF_GRID_POWER_ENTITIES: Final = "grid_power_entities"
@@ -24,6 +26,14 @@ CONF_BATTERY_MODE: Final = "battery_mode"
 CONF_BATTERY_POWER_ENTITIES: Final = "battery_power_entities"
 CONF_BATTERY_CHARGE_POWER_ENTITIES: Final = "battery_charge_power_entities"
 CONF_BATTERY_DISCHARGE_POWER_ENTITIES: Final = "battery_discharge_power_entities"
+
+# Existing daily energy sources in kWh/Wh. These are used for all daily kWh,
+# percentage and cost calculations.
+CONF_SOLAR_ENERGY_ENTITIES: Final = "solar_energy_entities"
+CONF_GRID_IMPORT_ENERGY_ENTITIES: Final = "grid_import_energy_entities"
+CONF_GRID_EXPORT_ENERGY_ENTITIES: Final = "grid_export_energy_entities"
+CONF_BATTERY_CHARGE_ENERGY_ENTITIES: Final = "battery_charge_energy_entities"
+CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES: Final = "battery_discharge_energy_entities"
 
 PRICE_UNIT_CURRENCY_PER_KWH: Final = "currency_per_kwh"
 PRICE_UNIT_MINOR_PER_KWH: Final = "minor_per_kwh"
@@ -58,17 +68,25 @@ TOTAL_GRID_IMPORT_COST: Final = "grid_import_cost"
 DERIVED_AUTARKY_PERCENT: Final = "autarky_percent"
 DERIVED_PV_SELF_CONSUMPTION_PERCENT: Final = "pv_self_consumption_percent"
 
-POWER_TO_ENERGY = {
-    SAMPLE_SOLAR_POWER: TOTAL_SOLAR_ENERGY,
-    SAMPLE_GRID_IMPORT_POWER: TOTAL_GRID_IMPORT_ENERGY,
-    SAMPLE_GRID_EXPORT_POWER: TOTAL_GRID_EXPORT_ENERGY,
-    SAMPLE_BATTERY_CHARGE_POWER: TOTAL_BATTERY_CHARGE_ENERGY,
-    SAMPLE_BATTERY_DISCHARGE_POWER: TOTAL_BATTERY_DISCHARGE_ENERGY,
-    SAMPLE_HOUSE_CONSUMPTION_POWER: TOTAL_HOUSE_CONSUMPTION_ENERGY,
-    SAMPLE_PV_SELF_CONSUMPTION_POWER: TOTAL_PV_SELF_CONSUMPTION_ENERGY,
-}
+SAMPLE_KEYS = [
+    SAMPLE_SOLAR_POWER,
+    SAMPLE_GRID_IMPORT_POWER,
+    SAMPLE_GRID_EXPORT_POWER,
+    SAMPLE_BATTERY_CHARGE_POWER,
+    SAMPLE_BATTERY_DISCHARGE_POWER,
+    SAMPLE_HOUSE_CONSUMPTION_POWER,
+    SAMPLE_PV_SELF_CONSUMPTION_POWER,
+    SAMPLE_GRID_IMPORT_COST_RATE,
+]
 
-TOTAL_KEYS = list(POWER_TO_ENERGY.values()) + [TOTAL_GRID_IMPORT_COST]
-SAMPLE_KEYS = list(POWER_TO_ENERGY.keys()) + [SAMPLE_GRID_IMPORT_COST_RATE]
+ENERGY_KEYS = [
+    TOTAL_SOLAR_ENERGY,
+    TOTAL_GRID_IMPORT_ENERGY,
+    TOTAL_GRID_EXPORT_ENERGY,
+    TOTAL_BATTERY_CHARGE_ENERGY,
+    TOTAL_BATTERY_DISCHARGE_ENERGY,
+    TOTAL_HOUSE_CONSUMPTION_ENERGY,
+    TOTAL_PV_SELF_CONSUMPTION_ENERGY,
+]
 
 INVALID_STATES: Final = {"unknown", "unavailable", "none", "None", ""}
