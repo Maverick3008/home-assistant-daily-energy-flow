@@ -32,6 +32,11 @@ Daily Energy Flow nutzt Live-Leistungssensoren in W nur für aktuelle Anzeigen. 
 - German and English translations
 - Local brand icons and logos
 
+Example:
+
+<img width="1429" height="1130" alt="image" src="https://github.com/user-attachments/assets/6a087534-1cce-4e6a-99db-675b6bca989e" />
+
+
 ## Important change in version 0.2.0
 
 Earlier versions integrated daily kWh internally from W values. Starting with **0.2.0**:
