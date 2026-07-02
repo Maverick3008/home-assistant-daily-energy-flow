@@ -379,11 +379,22 @@ class DailyEnergyFlowManager:
         battery_charge_power, battery_discharge_power = self._read_battery_power()
         price = self._read_price()
 
+        # Battery charging is not counted as household load. Battery discharging
+        # is counted as household consumption because it supplies real household
+        # load while the battery itself is not charging.
         house_consumption_power = max(
             0.0,
-            solar_power + grid_import_power - grid_export_power + battery_discharge_power - battery_charge_power,
+            solar_power
+            + grid_import_power
+            + battery_discharge_power
+            - grid_export_power
+            - battery_charge_power,
         )
-        pv_self_consumption_power = _clamp(solar_power - grid_export_power, 0.0, solar_power)
+        pv_self_consumption_power = _clamp(
+            solar_power - grid_export_power - battery_charge_power,
+            0.0,
+            solar_power,
+        )
         grid_import_cost_rate = (grid_import_power / 1000) * price
 
         return {
@@ -410,15 +421,21 @@ class DailyEnergyFlowManager:
             battery_charge_energy = max(0.0, self._sum_energy_entities(CONF_BATTERY_CHARGE_ENERGY_ENTITIES))
             battery_discharge_energy = max(0.0, self._sum_energy_entities(CONF_BATTERY_DISCHARGE_ENERGY_ENTITIES))
 
+        # Battery charging is removed from household consumption. Battery
+        # discharging is included because it supplies real household load.
         house_consumption_energy = max(
             0.0,
             solar_energy
             + grid_import_energy
-            - grid_export_energy
             + battery_discharge_energy
+            - grid_export_energy
             - battery_charge_energy,
         )
-        pv_self_consumption_energy = _clamp(solar_energy - grid_export_energy, 0.0, solar_energy)
+        pv_self_consumption_energy = _clamp(
+            solar_energy - grid_export_energy - battery_charge_energy,
+            0.0,
+            solar_energy,
+        )
 
         return {
             TOTAL_SOLAR_ENERGY: solar_energy,

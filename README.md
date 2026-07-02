@@ -13,11 +13,11 @@ This lets you use existing `utility_meter`, inverter, Shelly, myenergi or Hoymil
 
 ## Deutsche Kurzfassung
 
-Daily Energy Flow nutzt Live-Leistungssensoren in W nur für aktuelle Anzeigen. Tages-kWh, Hausverbrauch heute, Autarkie, PV-Eigenverbrauch und variable Netzbezugskosten werden ab Version 0.2.0 aus vorhandenen Energie-Sensoren in kWh/Wh berechnet. Die vollständige deutsche Anleitung findest du in [`README.de.md`](README.de.md).
+Daily Energy Flow nutzt Live-Leistungssensoren in W nur für aktuelle Anzeigen. Tages-kWh, Hausverbrauch heute, Autarkie, PV-Eigenverbrauch und variable Netzbezugskosten werden ab Version 0.2.2 aus vorhandenen Energie-Sensoren in kWh/Wh berechnet. Die vollständige deutsche Anleitung findest du in [`README.de.md`](README.de.md).
 
 ## Features
 
-- House consumption power excluding battery storage charging
+- House consumption power excluding battery storage charging but including battery storage discharging
 - House consumption today in kWh from existing energy sensors
 - Grid import power and grid import today in kWh
 - Grid export power and grid export today in kWh
@@ -32,34 +32,31 @@ Daily Energy Flow nutzt Live-Leistungssensoren in W nur für aktuelle Anzeigen. 
 - German and English translations
 - Local brand icons and logos
 
-Example:
+## Important change in version 0.2.2
 
-<img width="1429" height="1130" alt="image" src="https://github.com/user-attachments/assets/6a087534-1cce-4e6a-99db-675b6bca989e" />
-
-
-## Important change in version 0.2.0
-
-Earlier versions integrated daily kWh internally from W values. Starting with **0.2.0**:
+Earlier versions integrated daily kWh internally from W values. Starting with **0.2.2**:
 
 - **Power sensors** are used only for live current values.
 - **Energy sensors in kWh/Wh** are used for daily kWh, house consumption today, self-sufficiency, PV self-consumption and variable grid import costs.
 
 The energy sensors should be daily counters, for example `..._today`, `..._heute` or `utility_meter` sensors with a daily cycle.
 
+Starting with **0.2.2**, battery charging is excluded from house consumption, while battery discharging is included. This means charging the storage system is not treated as household load, but energy later supplied by the battery is counted as real household consumption.
+
 ## Calculation
 
 ### Live power in W
 
-House consumption excluding battery storage charging:
+House consumption excluding battery storage charging but including battery storage discharging:
 
 ```text
-house_consumption_power = solar_production_power + grid_import_power - grid_export_power + battery_discharge_power - battery_charge_power
+house_consumption_power = solar_production_power + grid_import_power + battery_discharge_power - grid_export_power - battery_charge_power
 ```
 
 PV self-consumption power:
 
 ```text
-pv_self_consumption_power = solar_production_power - grid_export_power
+pv_self_consumption_power = solar_production_power - grid_export_power - battery_charge_power
 ```
 
 ### Daily values in kWh
@@ -72,16 +69,16 @@ The following values are read from existing energy sensors:
 - Battery storage charge today
 - Battery storage discharge today
 
-House consumption today excluding battery storage charging:
+House consumption today excluding battery storage charging but including battery storage discharging:
 
 ```text
-house_consumption_today = solar_production_today + grid_import_today - grid_export_today + battery_discharge_today - battery_charge_today
+house_consumption_today = solar_production_today + grid_import_today + battery_discharge_today - grid_export_today - battery_charge_today
 ```
 
 PV self-consumption today:
 
 ```text
-pv_self_consumption_today = solar_production_today - grid_export_today
+pv_self_consumption_today = solar_production_today - grid_export_today - battery_charge_today
 ```
 
 Self-sufficiency today:

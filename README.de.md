@@ -13,7 +13,7 @@ Dadurch werden vorhandene `utility_meter`-, Wechselrichter-, Shelly-, myenergi- 
 
 ## Funktionen
 
-- Hausverbrauch als aktuelle Leistung ohne Akkuspeicher-Ladung
+- Hausverbrauch als aktuelle Leistung ohne Akkuspeicher-Ladung, aber mit Akkuspeicher-Entladung
 - Hausverbrauch heute in kWh aus vorhandenen Energie-Sensoren
 - Netzbezug als aktuelle Leistung und heute in kWh
 - Netzeinspeisung als aktuelle Leistung und heute in kWh
@@ -29,29 +29,31 @@ Dadurch werden vorhandene `utility_meter`-, Wechselrichter-, Shelly-, myenergi- 
 - Deutsche und englische Übersetzung
 - Lokale Icons und Logos im `brand/`-Ordner
 
-## Wichtige Änderung ab Version 0.2.0
+## Wichtige Änderung ab Version 0.2.2
 
-Vorher wurden Tages-kWh intern aus W-Werten integriert. Ab Version **0.2.0** gilt:
+Vorher wurden Tages-kWh intern aus W-Werten integriert. Ab Version **0.2.2** gilt:
 
 - **W-Sensoren**: nur für Live-Anzeigen.
 - **Energie-Sensoren in kWh/Wh**: Grundlage für Tages-kWh, Hausverbrauch heute, Autarkie, PV-Eigenverbrauch und variable Netzbezugskosten.
 
 Die Energie-Sensoren sollten Tageswerte sein, also zum Beispiel `..._today`, `..._heute` oder `utility_meter`-Sensoren mit täglichem Zyklus.
 
+Ab Version **0.2.2** wird die Akkuspeicher-Ladung beim Hausverbrauch bewusst herausgerechnet, die Akkuspeicher-Entladung wird aber eingerechnet. Dadurch zählt das Laden des Speichers nicht als Hausverbrauch, die später aus dem Akku versorgte Hauslast aber schon.
+
 ## Berechnung
 
 ### Live-Leistung in W
 
-Hausverbrauch ohne Akkuspeicher-Ladung:
+Hausverbrauch ohne Akkuspeicher-Ladung, aber mit Akkuspeicher-Entladung:
 
 ```text
-hausverbrauch_leistung = solarproduktion_leistung + netzbezug_leistung - netzeinspeisung_leistung + akku_entladeleistung - akku_ladeleistung
+hausverbrauch_leistung = solarproduktion_leistung + netzbezug_leistung + akku_entladeleistung - netzeinspeisung_leistung - akku_ladeleistung
 ```
 
 PV-Eigenverbrauch Leistung:
 
 ```text
-pv_eigenverbrauch_leistung = solarproduktion_leistung - netzeinspeisung_leistung
+pv_eigenverbrauch_leistung = solarproduktion_leistung - netzeinspeisung_leistung - akku_ladeleistung
 ```
 
 ### Tageswerte in kWh
@@ -64,16 +66,16 @@ Die folgenden Werte werden aus vorhandenen Energie-Sensoren gelesen:
 - Akkuspeicher-Ladung heute
 - Akkuspeicher-Entladung heute
 
-Hausverbrauch heute ohne Akkuspeicher-Ladung:
+Hausverbrauch heute ohne Akkuspeicher-Ladung, aber mit Akkuspeicher-Entladung:
 
 ```text
-hausverbrauch_heute = solarproduktion_heute + netzbezug_heute - netzeinspeisung_heute + akku_entladung_heute - akku_ladung_heute
+hausverbrauch_heute = solarproduktion_heute + netzbezug_heute + akku_entladung_heute - netzeinspeisung_heute - akku_ladung_heute
 ```
 
 PV-Eigenverbrauch heute:
 
 ```text
-pv_eigenverbrauch_heute = solarproduktion_heute - netzeinspeisung_heute
+pv_eigenverbrauch_heute = solarproduktion_heute - netzeinspeisung_heute - akku_ladung_heute
 ```
 
 Autarkie heute:
